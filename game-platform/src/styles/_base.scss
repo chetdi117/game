@@ -1,0 +1,25 @@
+@use './tokens';
+
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  color: #193b32;
+  background: #f8f7f0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --ink: #{tokens.$ink};
+  --muted: #{tokens.$muted};
+  --paper: #{tokens.$paper};
+  --line: #{tokens.$line};
+  --orange: #{tokens.$orange};
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+a { color: inherit; text-decoration: none; }
+button, a { touch-action: manipulation; }
+:focus-visible { outline: 3px solid #b84925; outline-offset: 5px; }
+#view:focus { outline: none; }

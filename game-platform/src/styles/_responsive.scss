@@ -1,0 +1,57 @@
+@use './tokens';
+@use './mixins';
+
+@include mixins.up(tokens.$breakpoint-wide) { .site-shell { max-width: 1160px; } }
+@include mixins.down(tokens.$breakpoint-tablet) {
+  .site-shell { width: calc(100% - 40px); }
+  .site-header { height: 85px; gap: 24px; }
+  .brand { font-size: 23px; }
+  .header-note { display: none; }
+  .nav-link { margin-left: auto; font-size: 11px; }
+  .hero { padding: 48px 0; }
+  .hero-stamp { width: 120px; height: 120px; margin: 0 14px 0 24px; flex-shrink: 0; }
+  .hero-stamp b { font-size: 46px; }
+  .hero-stamp span { font-size: 7px; }
+  .hero h1 { font-size: 37px; letter-spacing: -1.8px; }
+  .hero p { font-size: 12px; }
+  .section-heading > span { display: none; }
+  .game-grid { gap: 18px; }
+  .card-art { height: 250px; }
+  .mini-wheel { width: 170px; height: 170px; }
+  .mini-cards span { width: 76px; height: 124px; }
+  .card-content { padding: 22px 18px; }
+  .card-content h3 { font-size: 19px; }
+  .card-number { right: 16px; }
+  .play-layout { grid-template-columns: 1fr; }
+  .game-stage { max-height: 600px; }
+  .play-sidebar { padding: 30px; }
+  .play-sidebar h2 br { display: none; }
+  .pick-cards { max-width: 420px; }
+  .pick-card span { font-size: 56px; }
+}
+@include mixins.down(tokens.$breakpoint-mobile) {
+  .hero-stamp { display: none; }
+  .hero h1 { font-size: 36px; }
+  .hero { padding: 42px 0; }
+  .hero p { font-size: 12px; }
+  .eyebrow { font-size: 8px; letter-spacing: 1.3px; }
+  .game-grid { grid-template-columns: 1fr; }
+  .card-art { height: 285px; }
+  .mini-wheel { width: 200px; height: 200px; }
+  .mini-cards span { width: 95px; height: 145px; }
+  .card-content h3 { font-size: 23px; }
+  .desktop-break { display: none; }
+  .section-heading h2 { font-size: 17px; }
+  footer { margin-top: 40px; gap: 20px; font-size: 9px; }
+  footer > span:last-child { font-size: 7px; max-width: 130px; text-align: right; }
+  .game-heading { padding-top: 24px; }
+  .game-heading p { font-size: 12px; }
+  .play-sidebar { padding: 28px 22px; }
+  .pick-stage { padding: 18px; }
+  .pick-card { gap: 12px; }
+  .pick-card span { font-size: 36px; }
+  .pick-card small { font-size: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}

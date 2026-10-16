@@ -1,0 +1,14 @@
+{
+  "name": "my-phaser-game",
+  "private": true,
+  "packageManager": "yarn@4.12.0",
+  "workspaces": [
+    "game-platform"
+  ],
+  "scripts": {
+    "dev": "yarn workspace game-platform dev",
+    "build": "yarn workspace game-platform build",
+    "preview": "yarn workspace game-platform preview",
+    "test": "yarn workspace game-platform test"
+  }
+}
