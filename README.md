@@ -21,7 +21,7 @@ Chạy lệnh ở thư mục gốc `my-phaser-game`. App nằm trong workspace `
 | URL | Nội dung |
 | --- | --- |
 | `/` | Trang chọn game |
-| `/games/lucky-wheel` | Vòng quay may mắn, tám ô, animation và kết quả |
+| `/games/lucky-wheel` | Vòng quay may mắn, năm ô, animation và kết quả |
 | `/games/lucky-pick` | Game lật một trong ba thẻ |
 | URL khác | Trang không tìm thấy |
 
@@ -109,3 +109,9 @@ Entry: `src/styles/main.scss`, dùng Sass `@use`:
 Khi game mới có styles riêng, đặt `games/<id>/style.scss` và import từ entry game đó để Vite tải cùng game. Dùng tokens/mixins qua `@use '../../styles/tokens'` / `@use '../../styles/mixins'`.
 
 SCSS là lựa chọn styling hiện tại. Chưa cài Tailwind; Tailwind v4 không được thiết kế để chạy qua Sass. Nếu bổ sung sau, giữ entry CSS của Tailwind riêng và quyết định rõ phạm vi của hai hệ styling.
+
+## Lucky wheel fake API
+
+`/games/lucky-wheel` uses the shared Axios client with a browser-local mock adapter. No backend is required. GET `/games/lucky-wheel` returns the five configured blocks (40/25/10/5/20 percent). POST `/games/lucky-wheel/spins` accepts `{ "requestId": "unique-id" }`, selects a weighted reward, adds POINT rewards to the demo balance, and returns the reward, totalPoints and remainingSpins. Duplicate request IDs return the original result without awarding twice. Each mount starts with 0 points and 3 spins; reload or re-enter to reset. Demo vouchers have no redemption value.
+
+Implementation: `games/lucky-wheel/api.ts`, `mock-api.ts`, `contracts.ts`, `config.ts`. To connect a real backend, remove the per-request mock adapter in api.ts and set VITE_API_BASE_URL. The backend must own reward selection, balance updates and request deduplication. Spin POSTs are never automatically retried.

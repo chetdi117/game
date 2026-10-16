@@ -4,7 +4,7 @@ import { targetRotation, indexAtPointer } from '../src/games/lucky-wheel/math.ts
 import { randomIndex } from '../src/utils/random.ts'
 
 test('every selected prize stops under the pointer from arbitrary starting angles', () => {
-  for (const count of [3, 8, 12]) {
+  for (const count of [3, 5, 8, 12]) {
     for (const start of [-720, -45, 0, 120, 359, 4000]) {
       for (let index = 0; index < count; index++) {
         const target = targetRotation(start, index, count, 6)
