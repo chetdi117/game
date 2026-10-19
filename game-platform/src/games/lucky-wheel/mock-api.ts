@@ -2,21 +2,10 @@ import { AxiosError } from 'axios'
 import type { AxiosAdapter } from 'axios'
 import { randomIndex } from '../../utils/random.ts'
 import { DEMO_WHEEL } from './config.ts'
-import type { WheelBlock, SpinResult } from './contracts.ts'
+import { selectWeightedItem } from '../../utils/weighted-random.ts'
+import type { SpinResult } from './contracts.ts'
 
-export function selectReward(blocks: readonly WheelBlock[], roll: number): WheelBlock {
-  if (!Number.isFinite(roll) || roll < 0 || roll >= 100
-    || blocks.some(block => !Number.isFinite(block.probability) || block.probability < 0)
-    || blocks.reduce((sum, block) => sum + block.probability, 0) !== 100) {
-    throw new RangeError('Invalid reward probabilities or roll.')
-  }
-  let cumulative = 0
-  for (const block of blocks) {
-    cumulative += block.probability
-    if (roll < cumulative) return block
-  }
-  throw new RangeError('No reward found.')
-}
+export { selectWeightedItem as selectReward } from '../../utils/weighted-random.ts'
 
 // Fake transport: each mounted game has its own demo balance and spin history.
 export function createWheelMockAdapter(): AxiosAdapter {
@@ -38,7 +27,7 @@ export function createWheelMockAdapter(): AxiosAdapter {
     const previous = history.get(requestId)
     if (previous) return response(previous)
     if (remainingSpins === 0) return fail('No demo spins remaining.', 409)
-    const reward = selectReward(DEMO_WHEEL.blocks, randomIndex(10000) / 100)
+    const reward = selectWeightedItem(DEMO_WHEEL.blocks, randomIndex(10000) / 100)
     const pointsAdded = reward.type === 'POINT' ? reward.value : 0
     totalPoints += pointsAdded
     remainingSpins--

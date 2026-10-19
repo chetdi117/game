@@ -1,7 +1,8 @@
 import Phaser from 'phaser'
 import { GAME_CANVAS } from '../../constants/app.ts'
 import type { Cleanup } from '../../common/game.ts'
-import { renderGameFrame } from '../../common/layout.ts'
+import { routeHref } from '../../utils/path.ts'
+import './style.scss'
 import axios from 'axios'
 import { createWheelApi } from './api.ts'
 import type { WheelConfig } from './contracts.ts'
@@ -9,12 +10,29 @@ import { WHEEL_CONFIG } from './config.ts'
 import { normalizeDegrees, targetRotation } from './math.ts'
 
 export function mountGame(host: HTMLElement): Cleanup {
-  const { stage, controls, status } = renderGameFrame(host)
-  host.querySelector('.game-instructions')!.textContent = 'Demo 3 lượt quay. Điểm và voucher không có giá trị quy đổi. Tải lại trang để chơi lại.'
-  stage.setAttribute('role', 'img')
-  stage.setAttribute('aria-label', 'Vòng quay năm ô thưởng')
-  controls.innerHTML = '<button class="spin-button" type="button" disabled>Đang tải vòng quay…</button><span class="control-note">Mỗi vòng quay là một bất ngờ mới</span>'
-  const button = controls.querySelector<HTMLButtonElement>('button')!
+  document.body.classList.add('wheel-playing')
+  host.innerHTML = `<section class="wheel-screen" aria-label="Vòng quay may mắn">
+    <header class="wheel-hud">
+      <a class="wheel-back" data-route href="${routeHref('/', import.meta.env.BASE_URL)}" aria-label="Về danh sách game">←</a>
+      <h1>Vòng quay may mắn</h1>
+      <div class="wheel-turns" aria-live="polite">Còn <strong>3</strong> lượt</div>
+    </header>
+    <div class="wheel-play-area">
+      <div class="wheel-stage">
+        <button class="wheel-touch" type="button" disabled aria-label="Chạm vào bánh xe để quay" aria-describedby="wheel-hint"></button>
+      </div>
+    </div>
+    <div class="wheel-feedback">
+      <p id="wheel-hint" class="wheel-hint">Đang tải vòng quay…</p>
+      <p class="wheel-result" role="status" aria-live="polite" aria-atomic="true"></p>
+      <p class="wheel-demo">Chơi thử · Điểm và voucher không có giá trị quy đổi.</p>
+    </div>
+  </section>`
+  const stage = host.querySelector<HTMLElement>('.wheel-stage')!
+  const button = host.querySelector<HTMLButtonElement>('.wheel-touch')!
+  const status = host.querySelector<HTMLElement>('.wheel-result')!
+  const hint = host.querySelector<HTMLElement>('.wheel-hint')!
+  const turns = host.querySelector<HTMLElement>('.wheel-turns strong')!
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
   const controller = new AbortController()
   const api = createWheelApi()
@@ -68,18 +86,19 @@ export function mountGame(host: HTMLElement): Cleanup {
       this.add.triangle(center, center - radius + 9, 0, 0, 34, 0, 17, 40, 0xd65e35).setStrokeStyle(3, 0xfff3cf)
       spin = () => { void this.startSpin() }
       button.disabled = false
-      button.textContent = 'Quay ngay ↗'
+      hint.textContent = 'Chạm bánh xe để quay'
     }
 
     private async startSpin(): Promise<void> {
       if (spinning || disposed) return
       spinning = true
       button.disabled = true
-      button.textContent = 'May mắn đang đến…'
+      hint.textContent = 'May mắn đang đến…'
       status.textContent = 'Vòng quay đang chạy. Cùng chờ một chút nhé!'
       try {
         const result = await api.spin(crypto.randomUUID(), controller.signal)
         if (disposed) return
+        turns.textContent = String(result.remainingSpins)
         const index = config.blocks.findIndex(block => block.id === result.reward.id)
         if (index < 0) throw new Error('API returned an unknown reward.')
         const rotation = this.wheel.angle
@@ -92,7 +111,7 @@ export function mountGame(host: HTMLElement): Cleanup {
             if (disposed) return
             this.wheel.angle = normalizeDegrees(this.wheel.angle)
             status.textContent = result.reward.name + ' | Tổng: ' + result.totalPoints + ' điểm demo | Còn ' + result.remainingSpins + ' lượt'
-            button.textContent = result.remainingSpins > 0 ? 'Quay tiếp' : 'Đã hết lượt demo'
+            hint.textContent = result.remainingSpins > 0 ? 'Chạm bánh xe để quay tiếp' : 'Đã hết lượt demo'
             button.disabled = result.remainingSpins === 0
             spinning = false
           },
@@ -102,7 +121,7 @@ export function mountGame(host: HTMLElement): Cleanup {
         status.textContent = axios.isAxiosError(error)
           ? String(error.response?.data?.message ?? error.message)
           : error instanceof Error ? error.message : 'Unable to spin.'
-        button.textContent = 'Retry'
+        hint.textContent = 'Retry'
         button.disabled = false
         spinning = false
       }
@@ -134,6 +153,7 @@ export function mountGame(host: HTMLElement): Cleanup {
     disposed = true
     spin = undefined
     button.removeEventListener('click', onSpin)
+    document.body.classList.remove('wheel-playing')
     controller.abort()
     game?.destroy(true)
     host.replaceChildren()

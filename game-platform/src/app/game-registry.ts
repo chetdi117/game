@@ -16,7 +16,7 @@ export const games: readonly GameDefinition[] = [
     id: 'lucky-pick',
     path: GAME_PATHS.luckyPick,
     title: 'Lật thẻ bất ngờ',
-    description: 'Ba chiếc thẻ bí mật. Chọn một chiếc và mở một niềm vui nhỏ.',
+    description: 'Chạm lá bài bí mật, khám phá vận may của bạn.' ,
     number: '02',
     tag: 'CHỌN ĐIỀU BẤT NGỜ',
     art: 'cards',

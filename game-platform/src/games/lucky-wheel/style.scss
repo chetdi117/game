@@ -1,0 +1,104 @@
+body.wheel-playing {
+  overflow: hidden;
+
+  .site-header, .game-heading, .site-shell > footer { display: none; }
+}
+
+.wheel-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  color: #213d35;
+  background: radial-gradient(ellipse at center, #f8f2d8, #dce9d4);
+  padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+.wheel-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  h1 { margin: 0; font-size: clamp(16px, 3vw, 26px); letter-spacing: -.5px; text-align: center; }
+}
+
+.wheel-back {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #214e4040;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.wheel-turns {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border-radius: 24px;
+  background: #214e40;
+  color: #fff3cf;
+  font-size: 13px;
+  white-space: nowrap;
+
+  strong { font-size: 20px; }
+}
+
+.wheel-play-area {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  container-type: size;
+}
+
+.wheel-stage {
+  position: relative;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+
+  canvas { display: block; }
+}
+
+.wheel-touch {
+  position: absolute;
+  z-index: 1;
+  inset: 5%;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible { outline: 4px solid #b84925; outline-offset: 4px; }
+  &:disabled { cursor: default; }
+}
+
+.wheel-feedback {
+  text-align: center;
+  max-width: 640px;
+  justify-self: center;
+  width: 100%;
+
+  p { margin: 6px 0; }
+}
+
+.wheel-hint { font-size: clamp(14px, 2vw, 18px); font-weight: 700; }
+.wheel-result { min-height: 2.8em; font-size: 13px; line-height: 1.4; }
+.wheel-demo { font-size: 10px; line-height: 1.4; }
+
+@media (max-width: 380px) {
+  .wheel-hud { gap: 8px; }
+  .wheel-turns { padding: 8px 10px; font-size: 11px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .wheel-screen { grid-template-columns: minmax(0, 1fr) minmax(200px, .65fr); grid-template-rows: auto minmax(0, 1fr); gap: 4px 16px; }
+  .wheel-hud { grid-column: 1 / -1; }
+  .wheel-feedback { align-self: center; }
+}
